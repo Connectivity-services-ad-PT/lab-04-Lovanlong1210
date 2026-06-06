@@ -1,6 +1,6 @@
-# RUN_LOCAL.md – Hướng dẫn chạy Lab 04
+# RUN_LOCAL.md – Hướng dẫn chạy Lab 04 (Analytics Service)
 
-Tài liệu này giúp người khác clone repo sạch và chạy lại service trong Docker.
+Tài liệu này giúp người khác clone repo sạch và chạy lại service Analytics (A5) trong Docker.
 
 ---
 
@@ -8,7 +8,7 @@ Tài liệu này giúp người khác clone repo sạch và chạy lại service
 
 ```bash
 git clone <repo-url>
-cd FIT4110_lab04_docker_packaging
+cd lab-04-tuan9242
 ```
 
 ---
@@ -24,7 +24,7 @@ npm install
 ## 3. Build Docker image
 
 ```bash
-docker build -t fit4110/iot-ingestion:lab04 .
+docker build -t fit4110/analytics-service:lab04 .
 ```
 
 ---
@@ -32,11 +32,11 @@ docker build -t fit4110/iot-ingestion:lab04 .
 ## 4. Run container
 
 ```bash
-docker run --rm \
-  --name fit4110-iot-lab04 \
+docker run --rm -d \
+  --name fit4110-analytics-lab04 \
   -p 8000:8000 \
   --env-file .env.example \
-  fit4110/iot-ingestion:lab04
+  fit4110/analytics-service:lab04
 ```
 
 Mở terminal khác, kiểm tra:
@@ -50,14 +50,16 @@ Kết quả mong đợi:
 ```json
 {
   "status": "ok",
-  "service": "iot-ingestion",
-  "version": "0.4.0"
+  "service": "analytics-service",
+  "time": "2026-06-02T03:00:00Z"
 }
 ```
 
 ---
 
 ## 5. Chạy Newman test trên container
+
+Để chạy toàn bộ bài test hợp đồng trên Postman:
 
 ```bash
 npm run test:local
@@ -74,19 +76,21 @@ reports/newman-lab04-local.html
 
 ## 6. Dừng container
 
-Nếu không dùng `--rm` hoặc container còn chạy:
+Vì chúng ta chạy với cờ `-d` (detached), hãy dừng nó bằng lệnh:
 
 ```bash
-docker stop fit4110-iot-lab04
+docker stop fit4110-analytics-lab04
 ```
 
 ---
 
-## 7. Lệnh nhanh
+## 7. Lệnh nhanh (Makefile)
+
+Nếu có cài sẵn `make`, bạn có thể dùng các lệnh:
 
 ```bash
 make build
-make run
-make test-docker
+make run-detached
+make test-local
 make stop
 ```
