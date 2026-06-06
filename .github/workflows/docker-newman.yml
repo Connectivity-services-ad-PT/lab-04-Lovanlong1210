@@ -18,7 +18,14 @@ jobs:
           cache: "npm"
 
       - name: Install Node dependencies
-        run: npm ci
+        run: |
+          # Use npm ci when a lockfile exists for reproducible installs,
+          # otherwise fall back to npm install to avoid CI failing.
+          if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ] || [ -f yarn.lock ]; then
+            npm ci
+          else
+            npm install
+          fi
 
       - name: Lint OpenAPI contract
         run: npm run lint:openapi
